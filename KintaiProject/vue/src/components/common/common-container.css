@@ -1,0 +1,22 @@
+.common-container {
+  max-width: 900px;              /* 横幅を統一 */
+  width:90%;
+  min-height: 600px;         /* 高さを統一（可変なら min-height） */
+  margin: 40px auto;         /* 画面中央に配置 */
+  border: 1px solid #000;    /* 外枠の罫線 */
+  background-color: #fff;    /* 背景色 */
+  box-sizing: border-box;    /* 枠線込みでサイズを計算 */
+  padding: 20px;             /* 内側の余白 */
+}
+
+/* ログイン専用 */
+.login-container {
+  width: 400px;
+}
+
+/* メニューや勤怠入力用 */
+.menu-container,
+.attendance-container {
+  max-width: 1000px;
+  width: 90%;
+}
