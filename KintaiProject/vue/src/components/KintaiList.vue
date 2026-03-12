@@ -62,7 +62,7 @@
 				<button class="btn btn-secondary" @click="exportFile">ファイル出力</button>
 			</div>
 
-			<div class="result-count">{{ filteredData.length }}件</div>
+			<div class="result-count">{{ results.length }}件</div>
 
 			<div class="table-wrapper">
 				<table>
@@ -78,13 +78,13 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="(row, index) in filteredData" :key="index">
+						<tr v-for="row in results" :key="row.recordId">
 							<td>{{ row.name }}</td>
-							<td>{{ row.team }}</td>
+							<td>{{ row.teamId }}</td>
 							<td>{{ row.date }}</td>
-							<td>{{ row.reason }}</td>
-							<td>{{ row.train }}</td>
-							<td>{{ row.delay }}</td>
+							<td>{{ reasonLabel(row.reason) }}</td>
+							<td>{{ row.delayTime }}</td>
+							<td>{{ row.detail }}</td>
 							<td class="text-center">
 								<button class="btn-link" @click="goDetail(row)">詳細</button>
 							</td>
@@ -99,9 +99,10 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import CommonHeader from '@/components/common/CommonHeader.vue'	// 共通ヘッダー
- import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
+import axios from "axios";
 
- const router = useRouter()
+const router = useRouter()
 const user = ref(null)
 
 // ログイン時に保存したユーザ情報を取得
@@ -111,59 +112,6 @@ onMounted(() => {
 		user.value = JSON.parse(storedUser)
 	}
 })
-
-const showResults = ref(false); // 初期は非表示
-// モックデータ
-const mockData = ref([
-	{
-		name: "山田 太郎",
-		team: "チームA",
-		date: "2025/01/20",
-		reason: "電車遅延",
-		train: "山手線",
-		delay: "20分",
-	},
-	{
-		name: "佐藤 花子",
-		team: "チームB",
-		date: "2025/01/21",
-		reason: "人身事故",
-		train: "中央線",
-		delay: "35分",
-	},
-	{
-		name: "鈴木 次郎",
-		team: "チームA",
-		date: "2025/01/22",
-		reason: "信号トラブル",
-		train: "丸ノ内線",
-		delay: "15分",
-	},
-	{
-		name: "田中 美咲",
-		team: "チームC",
-		date: "2025/01/23",
-		reason: "強風による遅延",
-		train: "京王井の頭線",
-		delay: "25分",
-	},
-	{
-		name: "高橋 健",
-		team: "チームB",
-		date: "2025/01/24",
-		reason: "踏切点検",
-		train: "総武線",
-		delay: "10分",
-	},
-	{
-		name: "中村 彩",
-		team: "チームC",
-		date: "2025/01/25",
-		reason: "車両点検",
-		train: "埼京線",
-		delay: "30分",
-	}
-]);
 
 const kintaiListRole = {
 	EMPLOYEE: 1, // 社員
@@ -190,22 +138,104 @@ const filters = ref({
 	name: "",
 });
 
-// 検索処理（簡易フィルタ）
-const filteredData = computed(() => {
-	return mockData.value.filter((row) => {
-		const matchName = filters.value.name
-			? row.name.includes(filters.value.name)
-			: true;
-		const matchTeam = filters.value.team
-			? row.team === filters.value.team
-			: true;
-		return matchName && matchTeam;
-	});
-});
+const results = ref([]);        // 検索結果
+const showResults = ref(false); // 表示フラグ 初期は非表示
 
-const search = () => {
-	// モックなので computed が自動反映
-	showResults.value = true; // 検索結果表示
+// 検索処理（簡易フィルタ）
+//const filteredData = computed(() => {
+//	return mockData.value.filter((row) => {
+//		const matchName = filters.value.name
+//			? row.name.includes(filters.value.name)
+//			: true;
+//		const matchTeam = filters.value.team
+//			? row.team === filters.value.team
+//			: true;
+//		return matchName && matchTeam;
+//	});
+//});
+
+// モックデータ
+//const mockData = ref([
+//	{
+//		name: "上坂 祐司",
+//		team: "セクション1",
+//		date: "2025/01/20",
+//		reason: "電車遅延",
+//		train: "山手線",
+//		delay: "20分",
+//	},
+//	{
+//		name: "吉田 豊",
+//		team: "セクション1",
+//		date: "2025/01/21",
+//		reason: "人身事故",
+//		train: "京王井の頭線",
+//		delay: "35分",
+//	},
+//	{
+//		name: "大草 潤平 ",
+//		team: "セクション1",
+//		date: "2025/01/22",
+//		reason: "信号トラブル",
+//		train: "総武線",
+//		delay: "15分",
+//	},
+//	{
+//		name: "吉田 豊",
+//		team: "セクション1",
+//		date: "2025/01/23",
+//		reason: "強風による遅延",
+//		train: "京王井の頭線",
+//		delay: "25分",
+//	},
+//	{
+//		name: "大草 潤平",
+//		team: "セクション1",
+//		date: "2025/01/24",
+//		reason: "踏切点検",
+//		train: "総武線",
+//		delay: "10分",
+//	},
+//	{
+//		name: "上坂 祐司",
+//		team: "セクション1",
+//		date: "2025/01/25",
+//		reason: "車両点検",
+//		train: "山手線",
+//		delay: "30分",
+//	}
+//]);
+
+// 遅延理由コード変換
+const reasonLabel = (code) => {
+
+	const map = {
+		"1":"電車遅延",
+		"2":"寝坊",
+		"3":"体調不良",
+		"9":"その他"
+	};
+
+	return map[code] || "";
+
+};
+
+// 検索処理
+const search = async () => {
+	try {
+		const response = await axios.post(
+			"/api/attendance/search",
+			filters.value
+		)
+
+		results.value = response.data
+		showResults.value = true
+
+	} catch (error) {
+
+		console.error(error)
+		alert("検索に失敗しました")
+	}
 };
 
 const clear = () => {
@@ -231,7 +261,7 @@ const exportFile = () => {
 
 const goDetail = (row) => {
 	sessionStorage.setItem("loginUser", JSON.stringify(user.value))
-	sessionStorage.setItem('detail', JSON.stringify(row.value))
+	sessionStorage.setItem('detail', JSON.stringify(row))
 	router.push('/kintai-detail')
 };
 </script>
