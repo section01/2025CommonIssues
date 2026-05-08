@@ -18,13 +18,11 @@ public class AttendanceService {
 	AttendanceRepository repository;
 
 	public List<Map<String,Object>> search(
-			String empId,
-			String teamId,
 			LocalDate dateFrom,
 			LocalDate dateTo){
 
 		List<Object[]> list =
-				repository.search(empId,teamId,dateFrom,dateTo);
+				repository.search(dateFrom,dateTo);
 
 		List<Map<String,Object>> result = new ArrayList<>();
 

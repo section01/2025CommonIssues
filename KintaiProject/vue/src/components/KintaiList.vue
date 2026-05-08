@@ -145,10 +145,14 @@ const showResults = ref(false); // 表示フラグ 初期は非表示
 
 // 検索処理
 const search = async () => {
+	const payload = {
+		dateFrom: filters.value.dateFrom || null,
+		dateTo: filters.value.dateTo || null
+	}
 	try {
 		const response = await axios.post(
-			"/api/attendance/search",
-			filters.value
+			"http://localhost:8080/api/attendance/search",
+			payload
 		)
 
 		results.value = response.data

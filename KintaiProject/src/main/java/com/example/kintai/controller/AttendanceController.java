@@ -25,9 +25,12 @@ public class AttendanceController {
 	public List<Map<String,Object>> search(
 			@RequestBody AttendanceSearchRequest req){
 
+//		return service.search(
+//				req.getEmpId(),
+//				req.getTeamId(),
+//				req.getDateFrom(),
+//				req.getDateTo()
 		return service.search(
-				req.getEmpId(),
-				req.getTeamId(),
 				req.getDateFrom(),
 				req.getDateTo()
 		);
