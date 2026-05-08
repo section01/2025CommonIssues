@@ -14,18 +14,33 @@ public interface AttendanceRepository extends JpaRepository<AttendanceNotice,Str
 
 	@Query(value = """
 		SELECT
+			a.RECORD_ID,
 			e.NAME,
-			e.TEAM_ID,
+			t.TEAM_NAME,
 			a.NOTICES_DATE,
-			a.DELAY_REASON,
+
+			CASE a.DELAY_REASON
+				WHEN '1' THEN '電車遅延'
+				WHEN '2' THEN '寝坊'
+				WHEN '3' THEN '体調不良'
+				WHEN '9' THEN 'その他'
+			END AS REASON,
+
 			a.DELAY_TIME,
 			a.MAIN_TEXT
+
 		FROM
 			ATTENDANCE_NOTICES a
 		JOIN
 			EMPLOYEE e
 		ON
 			a.EMP_ID = e.EMP_ID
+
+		JOIN
+			TEAM t
+		ON
+			a.TEAM_ID = t.TEAM_ID
+
 		WHERE
 			(:empId IS NULL OR a.EMP_ID = :empId)
 		AND

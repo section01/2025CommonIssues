@@ -22,7 +22,7 @@
 	<div class="button-area">
 		<button @click="handleLogin">ログイン</button>
 		<button @click="handleClear">クリア</button>
-		<button @click="handleTest">バックエンド検証</button>
+		<!-- <button @click="handleTest">バックエンド検証</button> -->
 		<p v-if="department">{{ department.departmentId }}</p>
 		<p v-if="department">{{ department.departName }}</p>
 	</div>
@@ -107,10 +107,10 @@ const handleClear = () => {
 	message.value = 'ユーザIDとパスワードを入力してください'
 }
 
-async function handleTest() {
-	const res = await axios.get("http://localhost:8080/departmentMsts/1")
-	department.value = res.data
-}
+//async function handleTest() {
+//	const res = await axios.get("http://localhost:8080/departmentMsts/1")
+//	department.value = res.data
+//}
 
 
 

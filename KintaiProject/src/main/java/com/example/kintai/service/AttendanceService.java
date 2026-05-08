@@ -32,12 +32,13 @@ public class AttendanceService {
 
 			Map<String,Object> map = new HashMap<>();
 
-			map.put("name",row[0]);
-			map.put("teamId",row[1]);
-			map.put("date",row[2]);
-			map.put("reason",row[3]);
-			map.put("delayTime",row[4]);
-			map.put("detail",row[5]);
+			map.put("recordId", row[0]);
+			map.put("name", row[1]);
+			map.put("teamName", row[2]);
+			map.put("date", row[3]);
+			map.put("reason", row[4]);
+			map.put("delayTime", row[5]);
+			map.put("detail", row[6]);
 
 			result.add(map);
 		}

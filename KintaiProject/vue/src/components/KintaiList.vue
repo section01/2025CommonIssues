@@ -34,8 +34,9 @@
 
 				<div class="form-item">
 					<label>所属チーム</label>
-					<select v-model="filters.team">
-						<option value="">セクション1</option>
+					<select v-model="filters.teamId">
+						<option value="">すべて</option>
+						<option value="T0001">セクション1</option>
 					</select>
 				</div>
 
@@ -80,9 +81,9 @@
 					<tbody>
 						<tr v-for="row in results" :key="row.recordId">
 							<td>{{ row.name }}</td>
-							<td>{{ row.teamId }}</td>
-							<td>{{ row.date }}</td>
-							<td>{{ reasonLabel(row.reason) }}</td>
+							<td>{{ row.teamName }}</td>
+							<td>{{ formatDate(row.date) }}</td>
+							<td>{{ row.reason }}</td>
 							<td>{{ row.delayTime }}</td>
 							<td>{{ row.detail }}</td>
 							<td class="text-center">
@@ -135,90 +136,12 @@ const filters = ref({
 	dateFrom: "",
 	dateTo: "",
 	team: "",
+	teamId: "",
 	name: "",
 });
 
 const results = ref([]);        // 検索結果
 const showResults = ref(false); // 表示フラグ 初期は非表示
-
-// 検索処理（簡易フィルタ）
-//const filteredData = computed(() => {
-//	return mockData.value.filter((row) => {
-//		const matchName = filters.value.name
-//			? row.name.includes(filters.value.name)
-//			: true;
-//		const matchTeam = filters.value.team
-//			? row.team === filters.value.team
-//			: true;
-//		return matchName && matchTeam;
-//	});
-//});
-
-// モックデータ
-//const mockData = ref([
-//	{
-//		name: "上坂 祐司",
-//		team: "セクション1",
-//		date: "2025/01/20",
-//		reason: "電車遅延",
-//		train: "山手線",
-//		delay: "20分",
-//	},
-//	{
-//		name: "吉田 豊",
-//		team: "セクション1",
-//		date: "2025/01/21",
-//		reason: "人身事故",
-//		train: "京王井の頭線",
-//		delay: "35分",
-//	},
-//	{
-//		name: "大草 潤平 ",
-//		team: "セクション1",
-//		date: "2025/01/22",
-//		reason: "信号トラブル",
-//		train: "総武線",
-//		delay: "15分",
-//	},
-//	{
-//		name: "吉田 豊",
-//		team: "セクション1",
-//		date: "2025/01/23",
-//		reason: "強風による遅延",
-//		train: "京王井の頭線",
-//		delay: "25分",
-//	},
-//	{
-//		name: "大草 潤平",
-//		team: "セクション1",
-//		date: "2025/01/24",
-//		reason: "踏切点検",
-//		train: "総武線",
-//		delay: "10分",
-//	},
-//	{
-//		name: "上坂 祐司",
-//		team: "セクション1",
-//		date: "2025/01/25",
-//		reason: "車両点検",
-//		train: "山手線",
-//		delay: "30分",
-//	}
-//]);
-
-// 遅延理由コード変換
-const reasonLabel = (code) => {
-
-	const map = {
-		"1":"電車遅延",
-		"2":"寝坊",
-		"3":"体調不良",
-		"9":"その他"
-	};
-
-	return map[code] || "";
-
-};
 
 // 検索処理
 const search = async () => {
@@ -249,7 +172,9 @@ const clear = () => {
 	showResults.value = false; // 検索結果を隠す
 };
 
-
+const formatDate = (date) => {
+	return date?.replaceAll("-", "/");
+};
 
 const goBack = () => {
 	window.history.back();
