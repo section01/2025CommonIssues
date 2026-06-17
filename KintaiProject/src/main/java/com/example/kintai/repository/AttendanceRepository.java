@@ -72,7 +72,8 @@ public interface AttendanceRepository extends JpaRepository<AttendanceNotice,Str
 				END AS reason,
 				
 					a.DELAY_TIME,
-					a.MAIN_TEXT
+					a.MAIN_TEXT,
+					a.TRAIN
 
 			FROM
 				attendance_notices a
@@ -90,6 +91,9 @@ public interface AttendanceRepository extends JpaRepository<AttendanceNotice,Str
 				a.notices_date >= COALESCE(:dateFrom, a.notices_date)
 		  	AND
 		  		a.notices_date <= COALESCE(:dateTo, a.notices_date)
+		  	ORDER BY
+			  	a.emp_id ASC,
+			  	a.NOTICES_DATE DESC
 		""", nativeQuery = true)
 		List<Object[]> search(
 				LocalDate dateFrom,

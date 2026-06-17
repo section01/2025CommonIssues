@@ -37,6 +37,7 @@ public class AttendanceService {
 			map.put("reason", row[4]);
 			map.put("delayTime", row[5]);
 			map.put("detail", row[6]);
+			map.put("train", row[7]);
 
 			result.add(map);
 		}

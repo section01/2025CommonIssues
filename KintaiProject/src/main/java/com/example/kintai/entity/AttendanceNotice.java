@@ -39,5 +39,8 @@ public class AttendanceNotice {
 
 	@Column(name = "MAIN_TEXT")
 	private String mainText;
+	
+	@Column(name = "TRAIN")
+	private String train;
 
 }

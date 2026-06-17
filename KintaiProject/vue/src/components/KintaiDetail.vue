@@ -3,41 +3,36 @@
 
 	<!-- ヘッダー -->
 	<CommonHeader 
-		title=" 勤怠連絡参照画面（詳細）" 
+		title=" 勤怠連絡参照（詳細）" 
 		:showUser="true" 
 		:user="user"
 	/>
 
-	<!-- メッセージエリア -->
-	<div class="message-area" style="border: 1px solid black; padding: 10px; margin-top: 5px;">
-		検索条件を入力してください。
-	</div>
-
-    <!-- 入力エリア -->
+    <!-- データ表示エリア -->
     <div class="form-area">
       <div class="form-row">
         <label>日付</label>
-        <input type="date" v-model="date" />
+        <input type="date" v-model="date" readonly />
       </div>
       <div class="form-row">
         <label>始業時間</label>
-        <input type="text" v-model="startTime" placeholder="9時00分" />
+        <input type="text" v-model="startTime" placeholder="9時00分" readonly />
       </div>
       <div class="form-row">
         <label>理由</label>
-        <input type="text" v-model="reason" placeholder="電車遅延" />
+        <input type="text" v-model="reason" placeholder="電車遅延" readonly />
       </div>
       <div class="form-row">
         <label>電車</label>
-        <input type="text" v-model="trainLine" placeholder="○○××線" />
+        <input type="text" v-model="trainLine" placeholder="○○××線" readonly />
       </div>
       <div class="form-row">
         <label>遅延時間</label>
-        <input type="text" v-model="delayTime" placeholder="40分" />
+        <input type="text" v-model="delayTime" placeholder="40分" readonly />
       </div>
       <div class="form-row">
         <label>本文</label>
-        <textarea v-model="messageBody" rows="5" />
+        <textarea v-model="messageBody" rows="5" readonly />
       </div>
     </div>
 
@@ -64,14 +59,13 @@ onMounted(() => {
 	}
 })
 
-const date = ref('')
+const date = ref('2026-06-17')
 const startTime = ref('9時00分')
 const reason = ref('電車遅延')
-const trainLine = ref('○○××線')
-const delayTime = ref('40分')
-const messageBody = ref(`お疲れ様です。XXです。
-○○××線が台風の影響で40分ほど遅延しています。
-現場到着が予定よりXX時XX分予定です。`)
+const trainLine = ref('山手線')
+const delayTime = ref('30分')
+const messageBody = ref(`お疲れ様です。上坂です。
+山手線が台風の影響で、30分ほど遅延しているため、遅れます。`)
 
 const handleBack = () => {
   router.push('/menu') // 戻る先はメニュー画面など

@@ -2,7 +2,7 @@
 	<div>
 		<div class="common-container menu-container">
 			<CommonHeader 
-				title="勤怠連絡入力画面" 
+				title="勤怠連絡入力" 
 				:showUser="true" 
 				:user="user"
 			/>
@@ -31,12 +31,10 @@
 					style="width: 50px;"
 				/> 時
 				<input
-					type="number"
-					v-model.number="startMinute"
-					min="0"
-					max="59"
+					type="text"
+					:value="formattedStartMinute"
+					@input="onMinuteInput"
 					placeholder="分"
-					required
 					style="width: 50px; margin-left: 10px;"
 				/> 分
 			</div>
@@ -88,7 +86,7 @@
 
 <script setup>
 import CommonHeader from '@/components/common/CommonHeader.vue'
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -101,6 +99,17 @@ onMounted(() => {
 		user.value = JSON.parse(storedUser)
 	}
 })
+
+
+const formattedStartMinute = computed(() => {
+	if (startMinute.value === null || startMinute.value === undefined) return ''
+	return String(startMinute.value).padStart(2, '0')
+})
+
+const onMinuteInput = (e) => {
+	const val = e.target.value.replace(/\D/g, '') // 数字以外除去
+	startMinute.value = val ? Number(val) : 0
+}
 
 // 日付フォームなど
 const date = ref(getTodayDate())

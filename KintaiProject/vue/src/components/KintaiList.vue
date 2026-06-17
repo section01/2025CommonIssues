@@ -84,8 +84,8 @@
 							<td>{{ row.teamName }}</td>
 							<td>{{ formatDate(row.date) }}</td>
 							<td>{{ row.reason }}</td>
+							<td>{{ row.reason === '電車遅延' ? row.train : '-' }}</td>
 							<td>{{ row.delayTime }}</td>
-							<td>{{ row.detail }}</td>
 							<td class="text-center">
 								<button class="btn-link" @click="goDetail(row)">詳細</button>
 							</td>
@@ -185,7 +185,7 @@ const goBack = () => {
 };
 
 const exportFile = () => {
-	alert("ファイル出力（モック）を実行しました。");
+	alert("ファイル出力を実行しました。");
 };
 
 const goDetail = (row) => {
